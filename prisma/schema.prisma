@@ -1,0 +1,37 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum QueueStatus {
+  NEW
+  PROCESSING
+  DONE
+  FAILED
+}
+
+// Define the Queue model
+model Queue {
+  // Id column as an autoincrement integer
+  id        Int      @id @default(autoincrement())
+  
+  // createdAt column as date
+  createdAt DateTime @default(now())
+  
+  // status column as enum
+  status    QueueStatus @default(NEW)
+
+  name String
+
+  processingAt DateTime?
+
+  isDead Boolean @default(false)
+}
+

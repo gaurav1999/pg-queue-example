@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { QueueService } from '../queue/queue.service';
+import { Interval } from '@nestjs/schedule';
 
 @Injectable()
 export class ConsumerService {
@@ -29,5 +30,10 @@ export class ConsumerService {
         this.logger.log(`Starting to Consume`);
         await new Promise((res, rej) => { setTimeout(res, 2000) });
         this.logger.log(`Consumption Done`);
+    }
+
+    @Interval(10000) //Could be configured later on
+    private  async cleanDeadJobs() {
+        await this.queueService.cleanDeadJobs();
     }
 }

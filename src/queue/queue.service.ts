@@ -42,7 +42,7 @@ export class QueueService {
 
     async cleanDeadJobs() {
         const tenMinutesAgo = new Date(Date.now() - QueueService.JOB_QUEUE_TIME_OUT * 60 * 1000);
-        const deadJobs = await this.prisma.queue.updateMany({ where: { processingAt: { lte: tenMinutesAgo } }, data: {  isDead: true } });
+        const deadJobs = await this.prisma.queue.updateMany({ where: { processingAt: { lte: tenMinutesAgo }, isDead: false }, data: {  isDead: true } });
         this.logger.log(`Cleaned jobs which hanged up --> ${deadJobs.count}`)
     }
 

@@ -18,7 +18,12 @@ export class ConsumerService {
             if(event) {
                 this.logger.log(`Processing event -- id ${event.id} ---- ${event.name}`);
                 await this.queueService.lockForProcessing(event.id);
-                await this.handler();
+                try {
+                    await this.handler();
+                } catch(error) {
+                    await this.queueService.markFailed(event.id);
+                    this.logger.error(`Job: ${event.id} Couldn't be processed --- ${error.message}`);
+                }
                 await this.queueService.markProcessed(event.id);
                 this.logger.log(`Processing event done -- id ${event.id} ---- ${event.name}`);
             }

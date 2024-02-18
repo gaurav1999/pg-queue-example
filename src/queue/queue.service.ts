@@ -40,6 +40,12 @@ export class QueueService {
         return false;
     }
 
+    async markFailed(id: number): Promise<boolean> {
+        const response = await this.prisma.queue.update({ where: { id, status: QueueStatus.PROCESSING, isDead: false }, data: { status: QueueStatus.FAILED, isDead: true } });
+        if(response)return true;
+        return false;
+    }
+
     async cleanDeadJobs() {
         const tenMinutesAgo = new Date(Date.now() - QueueService.JOB_QUEUE_TIME_OUT * 60 * 1000);
         const deadJobs = await this.prisma.queue.updateMany({ where: { processingAt: { lte: tenMinutesAgo }, isDead: false }, data: {  isDead: true } });
